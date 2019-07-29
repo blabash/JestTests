@@ -1,6 +1,6 @@
 const express = require('express')
 const multer = require('multer')
-const sharp = require('sharp')
+// const sharp = require('sharp')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const { sendWelcomeEmail, sendCancelationEmail } = require('../emails/account')
@@ -11,7 +11,7 @@ router.post('/users', async (req, res) => {
 
     try {
         await user.save()
-        sendWelcomeEmail(user.email, user.name)
+        // sendWelcomeEmail(user.email, user.name)
         const token = await user.generateAuthToken()
         res.status(201).send({ user, token })
     } catch (e) {
@@ -77,7 +77,7 @@ router.patch('/users/me', auth, async (req, res) => {
 router.delete('/users/me', auth, async (req, res) => {
     try {
         await req.user.remove()
-        sendCancelationEmail(req.user.email, req.user.name)
+        // sendCancelationEmail(req.user.email, req.user.name)
         res.send(req.user)
     } catch (e) {
         res.status(500).send()
@@ -97,14 +97,14 @@ const upload = multer({
     }
 })
 
-router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
-    req.user.avatar = buffer
-    await req.user.save()
-    res.send()
-}, (error, req, res, next) => {
-    res.status(400).send({ error: error.message })
-})
+// router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+//     const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
+//     req.user.avatar = buffer
+//     await req.user.save()
+//     res.send()
+// }, (error, req, res, next) => {
+//     res.status(400).send({ error: error.message })
+// })
 
 router.delete('/users/me/avatar', auth, async (req, res) => {
     req.user.avatar = undefined
